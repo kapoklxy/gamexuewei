@@ -17,12 +17,14 @@ class AcupointGame {
         this.viewAllButton = document.getElementById('view-all');
         this.audioGood = document.getElementById('audio-good');
         this.audioWrong = document.getElementById('audio-wrong');
+        this.restartButton = document.getElementById('restart-game');
 
         // Bind event listeners
         this.startButton.addEventListener('click', () => this.startGame());
         this.nextButton.addEventListener('click', () => this.nextPoint());
         this.clickArea.addEventListener('click', (e) => this.handleClick(e));
         this.viewAllButton.addEventListener('click', () => this.viewAllAnswers());
+        this.restartButton.addEventListener('click', () => this.startGame());
 
         // Set image source
         this.bodyImage.src = config.imagePath;
@@ -105,7 +107,7 @@ class AcupointGame {
         this.marks = [];
     }
 
-    createMark(x, y, type, coordinates) {
+    createMark(x, y, type, coordinates, desc) {
         const mark = document.createElement('div');
         mark.className = type;
         mark.style.left = `${x}px`;
@@ -113,20 +115,16 @@ class AcupointGame {
         this.clickArea.appendChild(mark);
         this.marks.push(mark);
 
-        // 创建坐标显示
-        const coordDisplay = document.createElement('div');
-        coordDisplay.className = 'coordinates-display';
-        coordDisplay.textContent = `(${Math.round(coordinates.x)}, ${Math.round(coordinates.y)})`;
-        coordDisplay.style.left = `${x}px`;
-        coordDisplay.style.top = `${y}px`;
-        // 根据类型添加颜色
-        if (type === 'user-mark') {
-            coordDisplay.classList.add('coordinates-blue');
-        } else if (type === 'correct-mark') {
-            coordDisplay.classList.add('coordinates-red');
+        // 只在答错时的标准答案红点旁显示名称+描述
+        if (type === 'correct-mark' && desc) {
+            const descDisplay = document.createElement('div');
+            descDisplay.className = 'acupoint-desc';
+            descDisplay.textContent = `${this.currentTarget.name}：${desc}`;
+            descDisplay.style.left = `${x}px`;
+            descDisplay.style.top = `${y + 18}px`;
+            this.clickArea.appendChild(descDisplay);
+            this.marks.push(descDisplay);
         }
-        this.clickArea.appendChild(coordDisplay);
-        this.marks.push(coordDisplay);
     }
 
     handleClick(event) {
@@ -142,7 +140,7 @@ class AcupointGame {
         // 创建点击效果
         this.createClickEffect(event.clientX - rect.left, event.clientY - rect.top);
 
-        // 创建用户点击标记
+        // 创建用户点击标记（不显示说明）
         this.createMark(
             event.clientX - rect.left,
             event.clientY - rect.top,
@@ -153,12 +151,6 @@ class AcupointGame {
         // 创建正确答案标记
         const correctX = (this.currentTarget.x / scaleX);
         const correctY = (this.currentTarget.y / scaleY);
-        this.createMark(
-            correctX,
-            correctY,
-            'correct-mark',
-            { x: this.currentTarget.x, y: this.currentTarget.y }
-        );
 
         // 检查是否点击在目标穴位附近
         const distance = Math.sqrt(
@@ -167,8 +159,21 @@ class AcupointGame {
         );
 
         if (distance <= config.gameSettings.clickRadius) {
+            this.createMark(
+                correctX,
+                correctY,
+                'correct-mark',
+                { x: this.currentTarget.x, y: this.currentTarget.y }
+            );
             this.handleCorrectAnswer();
         } else {
+            this.createMark(
+                correctX,
+                correctY,
+                'correct-mark',
+                { x: this.currentTarget.x, y: this.currentTarget.y },
+                this.currentTarget.desc
+            );
             this.handleWrongAnswer();
         }
     }

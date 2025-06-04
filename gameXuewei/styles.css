@@ -194,4 +194,35 @@ button:disabled {
         opacity: 0;
         transform: translate(-50%, -50%) scale(2);
     }
+}
+
+.acupoint-desc {
+    position: absolute;
+    background: rgba(255,255,255,0.95);
+    color: #c62828;
+    font-size: 13px;
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-top: 4px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.restart-btn {
+    display: block;
+    margin: 0 auto 18px auto;
+    padding: 10px 32px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 5px;
+    background-color: #1976d2;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.restart-btn:hover {
+    background-color: #1565c0;
 } 
