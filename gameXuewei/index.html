@@ -3,21 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>穴位识别小游戏</title>
+    <title>穴位识别游戏</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="game-container">
-        <div class="score-display">
-            当前分数: <span id="score">10</span>
+    <div class="container">
+        <div class="game-header">
+            <h1>穴位识别游戏</h1>
+            <div class="score">得分: <span id="score">0</span></div>
         </div>
-        <div class="click-position" id="clickPosition"></div>
-        <div class="image-container">
-            <canvas id="gameCanvas"></canvas>
+        
+        <div class="game-area">
+            <div class="image-container">
+                <img id="body-image" src="" alt="人体穴位图">
+                <div id="click-area"></div>
+            </div>
+            
+            <div class="controls">
+                <div class="target-point">
+                    目标穴位: <span id="target-point">请选择穴位</span>
+                </div>
+                <div class="buttons">
+                    <button id="start-game">开始游戏</button>
+                    <button id="next-point">下一个穴位</button>
+                    <button id="view-all">查看所有穴位</button>
+                </div>
+            </div>
         </div>
-
-        <div class="message" id="message"></div>
     </div>
+    
+    <script src="config.js"></script>
     <script src="game.js"></script>
 </body>
 </html> 
