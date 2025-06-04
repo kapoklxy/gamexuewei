@@ -15,6 +15,8 @@ class AcupointGame {
         this.startButton = document.getElementById('start-game');
         this.nextButton = document.getElementById('next-point');
         this.viewAllButton = document.getElementById('view-all');
+        this.audioGood = document.getElementById('audio-good');
+        this.audioWrong = document.getElementById('audio-wrong');
 
         // Bind event listeners
         this.startButton.addEventListener('click', () => this.startGame());
@@ -77,14 +79,7 @@ class AcupointGame {
         this.bodyImage.src = 'images/front-upper-body-an.jpg';
         this.targetPointDisplay.textContent = '所有穴位';
         this.clearMarks();
-        // 显示所有穴位的红色标记和坐标
-        const rect = this.bodyImage.getBoundingClientRect();
-        // 需要等图片加载完成后再计算比例
-        if (this.bodyImage.complete) {
-            this.showAllMarks();
-        } else {
-            this.bodyImage.onload = () => this.showAllMarks();
-        }
+        // 不再显示任何标记
     }
 
     showAllMarks() {
@@ -194,6 +189,10 @@ class AcupointGame {
     handleCorrectAnswer() {
         this.score += config.gameSettings.correctPointBonus;
         this.updateScore();
+        if (this.audioGood) {
+            this.audioGood.currentTime = 0;
+            this.audioGood.play();
+        }
         alert('回答正确！');
         this.nextPoint();
     }
@@ -201,6 +200,10 @@ class AcupointGame {
     handleWrongAnswer() {
         this.score += config.gameSettings.wrongPointPenalty;
         this.updateScore();
+        if (this.audioWrong) {
+            this.audioWrong.currentTime = 0;
+            this.audioWrong.play();
+        }
         alert('回答错误！');
     }
 

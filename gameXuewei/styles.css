@@ -80,11 +80,21 @@ body {
     margin-bottom: 0;
 }
 
+.controls-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    width: 100%;
+    max-width: 720px;
+    margin-bottom: 10px;
+}
+
 .target-point {
     font-size: 1.2em;
     color: #333;
     text-align: left;
-    margin-bottom: 0;
     min-width: 120px;
 }
 
