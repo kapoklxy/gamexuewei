@@ -215,13 +215,28 @@ class AcupointGame {
     }
 
     showResultPopup(isCorrect) {
-        const popup = document.getElementById('result-popup');
-        popup.innerHTML = `<div class='result-popup-img-box'>
-            <img src='images/${isCorrect ? 'smile' : 'cry'}.gif' alt='' />
-        </div>`;
-        popup.classList.add('active');
+        const smileFeedback = document.getElementById('smileFeedback');
+        const cryFeedback = document.getElementById('cryFeedback');
+        
+        // 隐藏所有反馈图片
+        smileFeedback.style.display = 'none';
+        cryFeedback.style.display = 'none';
+        
+        // 显示对应的反馈图片
+        if (isCorrect) {
+            smileFeedback.style.display = 'block';
+            smileFeedback.style.left = '50%';
+            smileFeedback.style.top = '50%';
+        } else {
+            cryFeedback.style.display = 'block';
+            cryFeedback.style.left = '50%';
+            cryFeedback.style.top = '50%';
+        }
+        
+        // 2秒后隐藏反馈图片
         setTimeout(() => {
-            popup.classList.remove('active');
+            smileFeedback.style.display = 'none';
+            cryFeedback.style.display = 'none';
         }, 2000);
     }
 

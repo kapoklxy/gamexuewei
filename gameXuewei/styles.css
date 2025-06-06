@@ -113,6 +113,9 @@ button:disabled {
     width: 100%;
     max-width: 720px;
     margin: 0 auto;
+    background: #fff;
+    border-radius: 5px;
+    overflow: hidden;
 }
 
 #body-image {
@@ -132,50 +135,7 @@ button:disabled {
 }
 
 .restart-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: #f44336;
-}
-
-.restart-btn:hover {
-    background-color: #da190b;
-}
-
-#result-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 20px;
-    border-radius: 5px;
     display: none;
-    z-index: 1000;
-}
-
-@media (max-width: 600px) {
-    .container {
-        width: 100%;
-        margin: 0;
-        border-radius: 0;
-    }
-
-    .button-row {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    button {
-        width: 100%;
-        max-width: none;
-    }
-
-    .restart-btn {
-        position: static;
-        margin-bottom: 10px;
-    }
 }
 
 .game-container {
@@ -199,6 +159,9 @@ button:disabled {
     z-index: 1000;
     text-align: center;
     pointer-events: none;
+    background: none;
+    border: none;
+    box-shadow: none;
 }
 
 .feedback-container img {
@@ -207,13 +170,8 @@ button:disabled {
     display: block;
     margin: 0 auto;
     animation: fadeInOut 1.5s ease-in-out;
-}
-
-@keyframes fadeInOut {
-    0% { opacity: 0; }
-    20% { opacity: 1; }
-    80% { opacity: 1; }
-    100% { opacity: 0; }
+    border: none;
+    box-shadow: none;
 }
 
 @media (max-width: 600px) {
@@ -471,50 +429,6 @@ button:disabled {
     }
 }
 
-#result-popup {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.15);
-    z-index: 10000;
-    justify-content: center;
-    align-items: center;
-}
-#result-popup.active {
-    display: flex;
-}
-.result-popup-img-box {
-    background: transparent;
-    border-radius: 0;
-    box-shadow: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 80vw;
-    max-height: 60vh;
-}
-.result-popup-img-box img {
-    width: 32vw;
-    max-width: 180px;
-    height: auto;
-    border-radius: 1rem;
-    margin-bottom: 0;
-}
-@media (max-width: 600px) {
-    .result-popup-img-box {
-        max-width: 96vw;
-        padding: 0;
-    }
-    .result-popup-img-box img {
-        width: 48vw;
-        max-width: 90vw;
-    }
-}
-
 .button-area {
     width: 100%;
     display: flex;
@@ -533,4 +447,23 @@ button:disabled {
         gap: 8px;
         padding: 8px 0 0 0;
     }
+}
+
+.feedback-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.feedback-popup img {
+    width: 100px;
+    height: 100px;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    object-fit: cover;
 } 
