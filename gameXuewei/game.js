@@ -198,8 +198,10 @@ class AcupointGame {
             this.audioGood.currentTime = 0;
             this.audioGood.play();
         }
-        alert('回答正确！');
-        this.nextPoint();
+        this.showResultPopup(true);
+        setTimeout(() => {
+            this.nextPoint();
+        }, 2000);
     }
 
     handleWrongAnswer() {
@@ -209,7 +211,18 @@ class AcupointGame {
             this.audioWrong.currentTime = 0;
             this.audioWrong.play();
         }
-        alert('回答错误！');
+        this.showResultPopup(false);
+    }
+
+    showResultPopup(isCorrect) {
+        const popup = document.getElementById('result-popup');
+        popup.innerHTML = `<div class='result-popup-img-box'>
+            <img src='images/${isCorrect ? 'smile' : 'cry'}.gif' alt='' />
+        </div>`;
+        popup.classList.add('active');
+        setTimeout(() => {
+            popup.classList.remove('active');
+        }, 2000);
     }
 
     updateScore() {

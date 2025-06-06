@@ -19,7 +19,7 @@
                 <button id="start-game">开始游戏</button>
                 <button id="view-all">查看所有穴位</button>
             </div>
-            <div class="controls-row">
+            <div class="floating-box">
                 <div class="target-point">目标穴位: <span id="target-point">请选择穴位</span></div>
                 <button id="next-point">下一个穴位</button>
             </div>
@@ -32,6 +32,8 @@
     
     <audio id="audio-good" src="sounds/good.mp3" preload="auto"></audio>
     <audio id="audio-wrong" src="sounds/wrong.mp3" preload="auto"></audio>
+    
+    <div id="result-popup"></div>
     
     <script src="config.js"></script>
     <script src="game.js"></script>

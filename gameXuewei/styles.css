@@ -206,7 +206,9 @@ button:disabled {
     margin-top: 4px;
     left: 50%;
     transform: translate(-50%, 0);
-    white-space: nowrap;
+    max-width: 80vw;
+    white-space: normal;
+    word-break: break-all;
     pointer-events: none;
     z-index: 10;
 }
@@ -225,4 +227,104 @@ button:disabled {
 }
 .restart-btn:hover {
     background-color: #1565c0;
+}
+
+.floating-box {
+    position: fixed;
+    top: 2vw;
+    left: 2vw;
+    z-index: 9999;
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 2vw 3vw;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2vw;
+    max-width: 90vw;
+    min-width: 0;
+}
+
+.floating-box .target-point {
+    font-size: 1.1rem;
+    color: #222;
+    white-space: nowrap;
+}
+
+.floating-box #next-point {
+    background: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 1vw 4vw;
+    font-size: 1.1rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .floating-box {
+        top: 2vw;
+        left: 2vw;
+        padding: 2vw 2vw;
+        gap: 2vw;
+        max-width: 96vw;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .floating-box .target-point, .floating-box #next-point {
+        font-size: 1rem;
+    }
+    .floating-box #next-point {
+        padding: 2vw 6vw;
+    }
+    .acupoint-desc {
+        max-width: 96vw;
+        font-size: 12px;
+    }
+}
+
+#result-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.15);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+#result-popup.active {
+    display: flex;
+}
+.result-popup-img-box {
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 80vw;
+    max-height: 60vh;
+}
+.result-popup-img-box img {
+    width: 32vw;
+    max-width: 180px;
+    height: auto;
+    border-radius: 1rem;
+    margin-bottom: 0;
+}
+@media (max-width: 600px) {
+    .result-popup-img-box {
+        max-width: 96vw;
+        padding: 0;
+    }
+    .result-popup-img-box img {
+        width: 48vw;
+        max-width: 90vw;
+    }
 } 
