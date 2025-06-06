@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="feedback-container">
+        <img id="correctFeedback" src="images/correct.gif" alt="正确" style="display: none;">
+        <img id="wrongFeedback" src="images/wrong.gif" alt="错误" style="display: none;">
+    </div>
     <div class="container">
         <button id="restart-game" class="restart-btn">重新开始</button>
         <div class="game-header">
@@ -14,15 +18,18 @@
             <div class="score">得分: <span id="score">0</span></div>
         </div>
         
-        <div class="game-area">
-            <div class="controls-row">
+        <div class="button-container">
+            <div class="button-row">
                 <button id="start-game">开始游戏</button>
                 <button id="view-all">查看所有穴位</button>
             </div>
-            <div class="floating-box">
-                <div class="target-point">目标穴位: <span id="target-point">请选择穴位</span></div>
+            <div class="button-row">
                 <button id="next-point">下一个穴位</button>
+                <div class="target-point"><span id="target-point">请选择穴位</span></div>
             </div>
+        </div>
+
+        <div class="game-area">
             <div class="image-container">
                 <img id="body-image" src="" alt="人体穴位图">
                 <div id="click-area"></div>
