@@ -32,18 +32,6 @@
                 <div id="errorMessage" class="error-message"></div>
             </div>
         </div>
-        <div id="coordinateDisplay" class="coordinate-display" style="display:none;">
-            <div class="coordinate-title">点击坐标：</div>
-            <div class="coordinate-value">
-                <span>X: </span><span id="xCoordinate">-</span>
-                <span>Y: </span><span id="yCoordinate">-</span>
-            </div>
-            <div class="coordinate-title">穴位坐标（当前画面）：</div>
-            <div class="coordinate-value">
-                <span>X: </span><span id="targetScreenX">-</span>
-                <span>Y: </span><span id="targetScreenY">-</span>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -198,10 +186,6 @@
             const targetPoint = document.getElementById('targetPoint');
             const clickPoint = document.getElementById('clickPoint');
             const errorMessage = document.getElementById('errorMessage');
-            const xCoordinate = document.getElementById('xCoordinate');
-            const yCoordinate = document.getElementById('yCoordinate');
-            const targetScreenX = document.getElementById('targetScreenX');
-            const targetScreenY = document.getElementById('targetScreenY');
             const score = document.getElementById('score');
             const zoomIn = document.getElementById('zoomIn');
             const zoomOut = document.getElementById('zoomOut');
@@ -210,7 +194,6 @@
             const moveLeft = document.getElementById('moveLeft');
             const moveRight = document.getElementById('moveRight');
             const meridianSelect = document.getElementById('meridianSelect');
-            const coordinateDisplay = document.getElementById('coordinateDisplay');
             
             let isDragging = false;
             let startX, startY;
@@ -334,17 +317,6 @@
                 clickPoint.style.display = 'none';
             }
 
-            // 更新坐标显示
-            function updateCoordinateDisplay(x, y) {
-                xCoordinate.textContent = Math.round(x);
-                yCoordinate.textContent = Math.round(y);
-                coordinateDisplay.style.display = 'block';
-            }
-
-            function hideCoordinateDisplay() {
-                coordinateDisplay.style.display = 'none';
-            }
-
             // 更新得分
             function updateScore(points) {
                 currentScore += points;
@@ -401,7 +373,6 @@
                 const originalY = percentY * IMAGE_HEIGHT;
 
                 updateClickPoint(mouseX, mouseY);
-                updateCoordinateDisplay(originalX, originalY);
 
                 // 判断是否点击到穴位
                 const distance = Math.sqrt(Math.pow(originalX - currentAcupoint.x, 2) + Math.pow(originalY - currentAcupoint.y, 2));
@@ -412,9 +383,8 @@
                     answeredAcupoints.push(currentAcupoint.name); // 记录已答对的穴位
                     setTimeout(() => {
                         hideClickPoint();
-                        hideCoordinateDisplay();
                         startNewAcupoint();
-                    }, 3000); // 3秒后开始下一个穴位并隐藏点击点和坐标
+                    }, 3000);
                 } else {
                     updateScore(-1);
                     playSound('sounds/incorrect.mp3');
@@ -422,9 +392,8 @@
                     updateTargetPoint(true); // 显示红圈
                     setTimeout(() => {
                         hideClickPoint();
-                        hideCoordinateDisplay();
                         startNewAcupoint();
-                    }, 5000); // 5秒后开始下一个穴位并隐藏点击点和坐标
+                    }, 5000);
                 }
             });
 
