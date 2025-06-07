@@ -3,43 +3,434 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>穴位识别游戏</title>
+    <title>自适应画框</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="feedback-popup">
-        <img id="smileFeedback" src="images/smile.gif" alt="正确" style="display: none;">
-        <img id="cryFeedback" src="images/cry.gif" alt="错误" style="display: none;">
+    <div class="controls responsive-controls">
+        <select id="meridianSelect" class="meridian-select">
+            <option value="all">全部</option>
+            <option value="肺经">肺经</option>
+            <option value="心经">心经</option>
+        </select>
+        <button id="startButton" class="start-button">开始</button>
+        <span id="displayText" class="display-text"></span>
+        <button id="zoomIn" class="control-button">+</button>
+        <button id="zoomOut" class="control-button">-</button>
+        <button id="moveUp" class="control-button">↑</button>
+        <button id="moveDown" class="control-button">↓</button>
+        <button id="moveLeft" class="control-button">←</button>
+        <button id="moveRight" class="control-button">→</button>
+        <span class="score-label">得分：</span><span id="score" class="score-value">0</span>
     </div>
-    <div class="container">
-        <div class="game-header">
-            <h1>穴位识别游戏</h1>
-            <div class="score">得分: <span id="score">0</span></div>
-        </div>
-        
-        <div class="button-container">
-            <div class="button-row">
-                <button id="start-game">开始游戏</button>
-                <button id="view-all">查看所有穴位</button>
-            </div>
-            <div class="button-row">
-                <button id="next-point">下一个穴位</button>
-                <div class="target-point"><span id="target-point">请选择穴位</span></div>
-            </div>
-        </div>
-
-        <div class="game-area">
+    <div class="frame-container">
+        <div class="frame">
             <div class="image-container">
-                <img id="body-image" src="images/front-upper.png" alt="人体穴位图">
-                <div id="click-area"></div>
+                <img src="images/front-upper-body.png" alt="画框图片" class="frame-image">
+                <div id="targetPoint" class="point target-point"></div>
+                <div id="clickPoint" class="point click-point"></div>
+                <div id="errorMessage" class="error-message"></div>
+            </div>
+        </div>
+        <div id="coordinateDisplay" class="coordinate-display" style="display:none;">
+            <div class="coordinate-title">点击坐标：</div>
+            <div class="coordinate-value">
+                <span>X: </span><span id="xCoordinate">-</span>
+                <span>Y: </span><span id="yCoordinate">-</span>
+            </div>
+            <div class="coordinate-title">穴位坐标（当前画面）：</div>
+            <div class="coordinate-value">
+                <span>X: </span><span id="targetScreenX">-</span>
+                <span>Y: </span><span id="targetScreenY">-</span>
             </div>
         </div>
     </div>
-    
-    <audio id="audio-good" src="sounds/good.mp3" preload="auto"></audio>
-    <audio id="audio-wrong" src="sounds/wrong.mp3" preload="auto"></audio>
-    
-    <script src="config.js"></script>
-    <script src="game.js"></script>
+
+    <script>
+        // 穴位数据直接写在页面里
+        const acupoints = [
+            {
+                name: '少商',
+                x: 82,
+                y: 1073,
+                description: '在手拇指末节桡侧，距指甲角0.1寸。',
+                meridian: '肺经'
+            },
+            {
+                name: '鱼际',
+                x: 155,
+                y: 1055,
+                description: '在手拇指本节后凹陷处，约当第1掌骨中点桡侧，赤白肉际处。',
+                meridian: '肺经'
+            },
+            {
+                name: '太渊',
+                x: 206,
+                y: 1051,
+                description: '在腕掌侧横纹桡侧，桡动脉搏动处。',
+                meridian: '肺经'
+            },
+            {
+                name: '经渠',
+                x: 220,
+                y: 1041,
+                description: '在前臂掌面桡侧，桡骨茎突与桡动脉之间凹陷处，腕横纹上1寸。',
+                meridian: '肺经'
+            },
+            {
+                name: '列缺',
+                x: 225,
+                y: 1026,
+                description: '在前臂桡侧缘，桡骨茎突上方，腕横纹上1.5寸，当肱桡肌与拇长展肌腱之间。',
+                meridian: '肺经'
+            },
+            {
+                name: '孔最',
+                x: 335,
+                y: 952,
+                description: '在前臂掌面桡侧，当尺泽与太渊连线上，腕横纹上7寸处。',
+                meridian: '肺经'
+            },
+            {
+                name: '尺泽',
+                x: 409,
+                y: 867,
+                description: '在肘横纹中，肱二头肌腱桡侧凹陷处。',
+                meridian: '肺经'
+            },
+            {
+                name: '侠白',
+                x: 444,
+                y: 736,
+                description: '在臂内侧面，肱二头肌桡侧缘，腋前纹头下4寸，或肘横纹上5寸处。',
+                meridian: '肺经'
+            },
+            {
+                name: '天府',
+                x: 447,
+                y: 717,
+                description: '在臂内侧面，肱二头肌桡侧缘，腋前纹头下3寸处。',
+                meridian: '肺经'
+            },
+            {
+                name: '云门',
+                x: 512,
+                y: 527,
+                description: '在胸前壁的外上方，肩胛骨喙突上方，锁骨下窝凹陷处，距前正中线6寸。',
+                meridian: '肺经'
+            },
+            {
+                name: '中府',
+                x: 504,
+                y: 553,
+                description: '位于胸前壁外上方，云门穴下1寸，平第1肋间隙，距前正中线6寸。',
+                meridian: '肺经'
+            },
+            {
+                name: '极泉',
+                x: 470,
+                y: 641,
+                description: '位于腋窝顶点，腋动脉搏动处。',
+                meridian: '心经'
+            },
+            {
+                name: '青灵',
+                x: 485,
+                y: 793,
+                description: '在臂内侧，极泉穴与少海穴的连线上，肘横纹上3寸，肱二头肌的内侧沟中。',
+                meridian: '心经'
+            },
+            {
+                name: '少海',
+                x: 479,
+                y: 917,
+                description: '屈肘时，在肘横纹内侧端与肱骨内上髁连线的中点处。',
+                meridian: '心经'
+            },
+            {
+                name: '灵道',
+                x: 260,
+                y: 1072,
+                description: '在前臂掌侧，尺侧腕屈肌腱的桡侧缘，腕横纹上1.5寸。',
+                meridian: '心经'
+            },
+            {
+                name: '通里',
+                x: 251,
+                y: 1077,
+                description: '在前臂掌侧，尺侧腕屈肌腱的桡侧缘，腕横纹上1寸。',
+                meridian: '心经'
+            },
+            {
+                name: '阴郄',
+                x: 242,
+                y: 1082,
+                description: '在前臂掌侧，尺侧腕屈肌腱的桡侧缘，腕横纹上0.5寸。',
+                meridian: '心经'
+            },
+            {
+                name: '神门',
+                x: 232,
+                y: 1087,
+                description: '在腕部，腕掌侧横纹尺侧端，尺侧腕屈肌腱的桡侧凹陷处。',
+                meridian: '心经'
+            },
+            {
+                name: '少府',
+                x: 169,
+                y: 1128,
+                description: '在手掌面，第4、5掌骨之间，握拳时，当小指尖处。',
+                meridian: '心经'
+            },
+            {
+                name: '少冲',
+                x: 123,
+                y: 1147,
+                description: '在手小指末节桡侧，距指甲角0.1寸。',
+                meridian: '心经'
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const image = document.querySelector('.frame-image');
+            const startButton = document.getElementById('startButton');
+            const displayText = document.getElementById('displayText');
+            const targetPoint = document.getElementById('targetPoint');
+            const clickPoint = document.getElementById('clickPoint');
+            const errorMessage = document.getElementById('errorMessage');
+            const xCoordinate = document.getElementById('xCoordinate');
+            const yCoordinate = document.getElementById('yCoordinate');
+            const targetScreenX = document.getElementById('targetScreenX');
+            const targetScreenY = document.getElementById('targetScreenY');
+            const score = document.getElementById('score');
+            const zoomIn = document.getElementById('zoomIn');
+            const zoomOut = document.getElementById('zoomOut');
+            const moveUp = document.getElementById('moveUp');
+            const moveDown = document.getElementById('moveDown');
+            const moveLeft = document.getElementById('moveLeft');
+            const moveRight = document.getElementById('moveRight');
+            const meridianSelect = document.getElementById('meridianSelect');
+            const coordinateDisplay = document.getElementById('coordinateDisplay');
+            
+            let isDragging = false;
+            let startX, startY;
+            let translateX = 0;
+            let translateY = 0;
+            let scale = 1;
+            let isGameStarted = false;
+            let currentScore = 0;
+            let currentAcupoint = null;
+            let answeredAcupoints = []; // 记录已答对的穴位
+
+            // 图片尺寸
+            const IMAGE_WIDTH = 1080;
+            const IMAGE_HEIGHT = 1440;
+            const MOVE_STEP = 20; // 移动步长
+            const ZOOM_STEP = 0.1; // 缩放步长
+
+            // 更新底部穴位坐标
+            function updateTargetScreenCoordinate() {
+                if (!currentAcupoint) return;
+                const rect = image.getBoundingClientRect();
+                const x = (currentAcupoint.x / IMAGE_WIDTH) * rect.width;
+                const y = (currentAcupoint.y / IMAGE_HEIGHT) * rect.height;
+                targetScreenX.textContent = Math.round(x);
+                targetScreenY.textContent = Math.round(y);
+            }
+
+            // 开始按钮点击事件
+            startButton.addEventListener('click', function() {
+                startNewAcupoint();
+            });
+
+            // 开始新的穴位
+            function startNewAcupoint() {
+                // 获取当前选择的经络
+                const selectedMeridian = meridianSelect.value;
+                // 过滤出当前经络的穴位
+                let filteredAcupoints = acupoints;
+                if (selectedMeridian !== 'all') {
+                    filteredAcupoints = acupoints.filter(a => a.meridian === selectedMeridian);
+                }
+                // 过滤掉已答对的穴位
+                const availableAcupoints = filteredAcupoints.filter(acupoint => !answeredAcupoints.includes(acupoint.name));
+                if (availableAcupoints.length === 0) {
+                    // 如果所有穴位都已答对，重置记录
+                    answeredAcupoints = [];
+                    currentAcupoint = filteredAcupoints[Math.floor(Math.random() * filteredAcupoints.length)];
+                } else {
+                    currentAcupoint = availableAcupoints[Math.floor(Math.random() * availableAcupoints.length)];
+                }
+                displayText.textContent = currentAcupoint.name;
+                isGameStarted = true;
+                updateTargetPoint(false); // 默认隐藏红圈
+                updateTargetScreenCoordinate();
+            }
+
+            // 更新图片位置和缩放
+            function updateImageTransform() {
+                image.style.transform = `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) scale(${scale})`;
+                if (isGameStarted) {
+                    updateTargetPoint(false); // 默认隐藏红圈
+                    updateTargetScreenCoordinate();
+                }
+            }
+
+            // 缩放控制
+            zoomIn.addEventListener('click', function() {
+                scale = Math.min(3, scale + ZOOM_STEP);
+                updateImageTransform();
+            });
+
+            zoomOut.addEventListener('click', function() {
+                scale = Math.max(0.5, scale - ZOOM_STEP);
+                updateImageTransform();
+            });
+
+            // 移动控制
+            moveUp.addEventListener('click', function() {
+                translateY -= MOVE_STEP;
+                updateImageTransform();
+            });
+
+            moveDown.addEventListener('click', function() {
+                translateY += MOVE_STEP;
+                updateImageTransform();
+            });
+
+            moveLeft.addEventListener('click', function() {
+                translateX -= MOVE_STEP;
+                updateImageTransform();
+            });
+
+            moveRight.addEventListener('click', function() {
+                translateX += MOVE_STEP;
+                updateImageTransform();
+            });
+
+            // 更新目标穴位位置
+            function updateTargetPoint(show = false) {
+                if (!currentAcupoint) return;
+                const rect = image.getBoundingClientRect();
+                const containerRect = image.parentElement.getBoundingClientRect();
+                // 计算红圈在image-container内的坐标
+                const x = (currentAcupoint.x / IMAGE_WIDTH) * rect.width + (rect.left - containerRect.left);
+                const y = (currentAcupoint.y / IMAGE_HEIGHT) * rect.height + (rect.top - containerRect.top);
+                targetPoint.style.left = `${x}px`;
+                targetPoint.style.top = `${y}px`;
+                targetPoint.style.transform = `translate(-50%, -50%)`;
+                targetPoint.style.display = show ? 'block' : 'none';
+            }
+
+            // 更新点击位置
+            function updateClickPoint(x, y) {
+                clickPoint.style.left = `${x}px`;
+                clickPoint.style.top = `${y}px`;
+                clickPoint.style.transform = `translate(-50%, -50%)`;
+                clickPoint.style.display = 'block';
+            }
+
+            function hideClickPoint() {
+                clickPoint.style.display = 'none';
+            }
+
+            // 更新坐标显示
+            function updateCoordinateDisplay(x, y) {
+                xCoordinate.textContent = Math.round(x);
+                yCoordinate.textContent = Math.round(y);
+                coordinateDisplay.style.display = 'block';
+            }
+
+            function hideCoordinateDisplay() {
+                coordinateDisplay.style.display = 'none';
+            }
+
+            // 更新得分
+            function updateScore(points) {
+                currentScore += points;
+                score.textContent = currentScore;
+            }
+
+            // 播放提示音
+            function playSound(filename) {
+                const audio = new Audio(filename);
+                audio.play();
+            }
+
+            // 显示错误信息
+            function showErrorMessage(x, y) {
+                if (!currentAcupoint) return;
+                errorMessage.textContent = `${currentAcupoint.name}：${currentAcupoint.description}`;
+                errorMessage.style.left = `${x + 20}px`;
+                errorMessage.style.top = `${y - 20}px`;
+                errorMessage.style.display = 'block';
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 3000);
+            }
+
+            // 图片点击事件
+            image.addEventListener('click', function(e) {
+                if (!isGameStarted || !currentAcupoint) return;
+
+                const frameRect = image.parentElement.getBoundingClientRect(); // image-container
+                const imgRect = image.getBoundingClientRect();
+
+                // 鼠标在画框内的坐标
+                const mouseX = e.clientX - frameRect.left;
+                const mouseY = e.clientY - frameRect.top;
+
+                // 计算图片实际显示区域的左上角
+                const imgDisplayWidth = imgRect.width;
+                const imgDisplayHeight = imgRect.height;
+                const imgDisplayLeft = imgRect.left - frameRect.left;
+                const imgDisplayTop = imgRect.top - frameRect.top;
+
+                // 判断点击是否在图片显示区域内
+                if (
+                    mouseX < imgDisplayLeft || mouseX > imgDisplayLeft + imgDisplayWidth ||
+                    mouseY < imgDisplayTop || mouseY > imgDisplayTop + imgDisplayHeight
+                ) {
+                    return;
+                }
+
+                // 映射到图片原始像素坐标
+                const percentX = (mouseX - imgDisplayLeft) / imgDisplayWidth;
+                const percentY = (mouseY - imgDisplayTop) / imgDisplayHeight;
+                const originalX = percentX * IMAGE_WIDTH;
+                const originalY = percentY * IMAGE_HEIGHT;
+
+                updateClickPoint(mouseX, mouseY);
+                updateCoordinateDisplay(originalX, originalY);
+
+                // 判断是否点击到穴位
+                const distance = Math.sqrt(Math.pow(originalX - currentAcupoint.x, 2) + Math.pow(originalY - currentAcupoint.y, 2));
+                if (distance < 10) { // 允许10像素的误差
+                    updateScore(1);
+                    playSound('sounds/correct.mp3');
+                    updateTargetPoint(false); // 隐藏红圈
+                    answeredAcupoints.push(currentAcupoint.name); // 记录已答对的穴位
+                    setTimeout(() => {
+                        hideClickPoint();
+                        hideCoordinateDisplay();
+                        startNewAcupoint();
+                    }, 3000); // 3秒后开始下一个穴位并隐藏点击点和坐标
+                } else {
+                    updateScore(-1);
+                    playSound('sounds/incorrect.mp3');
+                    showErrorMessage(mouseX, mouseY);
+                    updateTargetPoint(true); // 显示红圈
+                    setTimeout(() => {
+                        hideClickPoint();
+                        hideCoordinateDisplay();
+                        startNewAcupoint();
+                    }, 5000); // 5秒后开始下一个穴位并隐藏点击点和坐标
+                }
+            });
+
+            // 禁用拖拽功能
+            image.style.cursor = 'default';
+        });
+    </script>
 </body>
 </html> 
