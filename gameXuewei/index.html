@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="controls responsive-controls">
+    <div class="controls responsive-controls top-controls">
         <select id="meridianSelect" class="meridian-select">
             <option value="all">全部</option>
             <option value="肺经">肺经</option>
@@ -15,15 +15,15 @@
         </select>
         <button id="startButton" class="start-button">开始</button>
         <span id="displayText" class="display-text"></span>
+        <span class="score-label">得分：</span><span id="score" class="score-value">0</span>
         <button id="zoomIn" class="control-button">+</button>
         <button id="zoomOut" class="control-button">-</button>
         <button id="moveUp" class="control-button">↑</button>
         <button id="moveDown" class="control-button">↓</button>
         <button id="moveLeft" class="control-button">←</button>
         <button id="moveRight" class="control-button">→</button>
-        <span class="score-label">得分：</span><span id="score" class="score-value">0</span>
     </div>
-    <div class="frame-container">
+    <div class="frame-container mobile-max-frame">
         <div class="frame">
             <div class="image-container">
                 <img src="images/front-upper-body.png" alt="画框图片" class="frame-image">
